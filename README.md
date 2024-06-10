@@ -1,4 +1,4 @@
 # Syno AI
- Syno AI AI framework
+ Personal and organic AI framework
 
-![Syno AI](docs/splash.webp)
+![Syno AI](docs/splash_wide.png)
