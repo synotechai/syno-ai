@@ -21,6 +21,7 @@ To begin with Syno AI, follow the links below for detailed guides on various top
 
 ### Your experience with Syno AI starts now!
 
+- **Download Syno AI:** Download the latest release from the [GitHub releases page](https://github.com/synotechai/syno-ai/releases).
 - **Join the Community:** Join the Syno AI [Skool](https://www.skool.com/syno-ai) or [Discord](https://discord.gg/Z2tun2N3) community to discuss ideas, ask questions, and collaborate with other contributors.
 - **Share your Work:** Share your Syno AI creations, workflows and discoverings on our [Show and Tell](https://github.com/synotechai/syno-ai/discussions/categories/show-and-tell) area on GitHub.
 - **Report Issues:** Use the GitHub issue tracker to report bugs or suggest new features.
