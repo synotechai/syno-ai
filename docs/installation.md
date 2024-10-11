@@ -4,7 +4,7 @@
 
 The following guide provides both quick start instructions for the full installation of Syno AI on various operating systems and in-depth guides for Windows and macOS with screenshots.
 
-## You were looking for this? [How to update Syno AI](#how-to-update-syno-ai)
+## You were looking for this? [How to update Syno AI](#-how-to-update-syno-ai)
 
 <details>
 <summary><h2>Windows Quick Start</h2></summary>

@@ -44,7 +44,7 @@ To begin with Syno AI, follow the links below for detailed guides on various top
     - [6. Run Syno AI](installation.md#6-run-syno-ai)
     - [Choosing Your LLMs](installation.md#choosing-your-llms)
       - [Installing and Using Ollama](installation.md#installing-and-using-ollama)
-    - [How to update Syno AI](installation.md#how-to-update-syno-ai)
+    - [How to update Syno AI](installation.md#-how-to-update-syno-ai)
     - [Conclusion](installation.md#conclusion)
 - [Quick Start](quickstart.md)
   - [Launching the Web UI](quickstart.md#launching-the-web-ui)
