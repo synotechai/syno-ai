@@ -70,8 +70,8 @@ if exist syno-ai (
     )
 )
 
-:: 4. Clone the repository (development branch)
-git clone --branch development https://github.com/synotechai/syno-ai syno-ai
+:: 4. Clone the repository (testing branch)
+git clone --branch testing https://github.com/synotechai/syno-ai syno-ai
 if %ERRORLEVEL% neq 0 (
     echo Error cloning the repository
     pause
