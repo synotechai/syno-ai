@@ -67,4 +67,28 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# 9. Move the generated 7z file to the script directory and remove syno-ai folder
+BUNDLE_FILE="bundle/dist/syno-ai.7z"
+if [ -f "$BUNDLE_FILE" ]; then
+    SCRIPT_DIR=$(dirname "$0")
+    echo "Moving $BUNDLE_FILE to $SCRIPT_DIR..."
+    mv "$BUNDLE_FILE" "$SCRIPT_DIR"
+    if [ $? -ne 0 ]; then
+        echo "Error moving $BUNDLE_FILE to $SCRIPT_DIR."
+        exit 1
+    fi
+else
+    echo "Error: $BUNDLE_FILE not found."
+    exit 1
+fi
+
+# 10. Remove the syno-ai folder
+echo "Deleting syno-ai folder..."
+cd ..
+rm -rf syno-ai
+if [ -d "syno-ai" ]; then
+    echo "Error: Failed to delete syno-ai folder."
+    exit 1
+fi
+
 echo "Script completed."
