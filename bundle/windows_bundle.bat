@@ -56,38 +56,44 @@ if %errorlevel% neq 0 (
 )
 
 :: 3. Purge folder ./syno-ai (retry mechanism in case of failure)
-if exist syno-ai (
-    echo Deleting syno-ai folder...
-    rmdir /s /q syno-ai
-    if exist syno-ai (
-        echo Error: Unable to delete syno-ai folder, retrying...
+if exist syno-ai-git (
+    echo Deleting syno-ai-git folder...
+    rmdir /s /q syno-ai-git
+    if exist syno-ai-git (
+        echo Error: Unable to delete syno-ai-git folder, retrying...
         timeout /t 3 /nobreak >nul
-        rmdir /s /q syno-ai
+        rmdir /s /q syno-ai-git
     )
-    if exist syno-ai (
-        echo Error: Failed to purge syno-ai folder after retry.
+    if exist syno-ai-git (
+        echo Error: Failed to purge syno-ai-git folder after retry.
         pause
     )
 )
 
-:: 4. Clone the repository (testing branch)
-git clone --branch testing https://github.com/synotechai/syno-ai syno-ai
+:: 4. Clone the repository (development branch)
+git clone --branch development https://github.com/synotechai/syno-ai syno-ai-git
 if %ERRORLEVEL% neq 0 (
     echo Error cloning the repository
     pause
 )
 
-:: 5. Change directory to syno-ai
-cd syno-ai
+@REM :: 5. Change directory to syno-ai
+@REM cd syno-ai
+@REM if %errorlevel% neq 0 (
+@REM     echo Error changing directory
+@REM     pause
+@REM )
+
+:: 6. Install requirements
+pip install -r ./syno-ai-git/requirements.txt
 if %errorlevel% neq 0 (
-    echo Error changing directory
+    echo Error installing project requirements
     pause
 )
 
-:: 6. Install requirements
-pip install -r requirements.txt
+pip install -r ./syno-ai-git/bundle/requirements.txt
 if %errorlevel% neq 0 (
-    echo Error installing requirements
+    echo Error installing bundle requirements
     pause
 )
 
@@ -99,9 +105,17 @@ if %errorlevel% neq 0 (
 )
 
 :: 8. Run bundle.py
-python ./bundle/bundle.py
+python ./syno-ai-git/bundle/bundle.py
 if %errorlevel% neq 0 (
     echo Error running bundle.py
+    pause
+)
+
+:: 9. Create Windows self-extracting archive with 7-Zip
+echo Creating Windows self-extracting archive...
+"C:\Program Files\7-Zip\7z.exe" a -sfx"C:\Program Files\7-Zip\7z.sfx" syno-ai-preinstalled-win-x86.exe ".\syno-ai-git\bundle\dist\syno-ai" -mx=7
+if %errorlevel% neq 0 (
+    echo Error creating Windows self-extracting archive.
     pause
 )
 
