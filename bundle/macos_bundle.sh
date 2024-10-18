@@ -37,9 +37,9 @@ if [ -d "syno-ai-git" ]; then
     fi
 fi
 
-# 4. Clone the repository (development branch)
-echo "Cloning the repository (development branch)..."
-git clone --branch development https://github.com/synotechai/syno-ai syno-ai-git
+# 4. Clone the repository (testing branch)
+echo "Cloning the repository (testing branch)..."
+git clone --branch testing https://github.com/synotechai/syno-ai syno-ai-git
 if [ $? -ne 0 ]; then
     echo "Error cloning the repository."
     exit 1
