@@ -22,35 +22,41 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# 3. Purge folder ./syno-ai (retry mechanism in case of failure)
-if [ -d "syno-ai" ]; then
-    echo "Deleting syno-ai folder..."
-    rm -rf syno-ai
-    if [ -d "syno-ai" ]; then
-        echo "Error: Unable to delete syno-ai folder, retrying..."
+# 3. Purge folder ./syno-ai-git (retry mechanism in case of failure)
+if [ -d "syno-ai-git" ]; then
+    echo "Deleting syno-ai-git folder..."
+    rm -rf syno-ai-git
+    if [ -d "syno-ai-git" ]; then
+        echo "Error: Unable to delete syno-ai-git folder, retrying..."
         sleep 3
-        rm -rf syno-ai
+        rm -rf syno-ai-git
     fi
-    if [ -d "syno-ai" ]; then
-        echo "Error: Failed to purge syno-ai folder after retry."
+    if [ -d "syno-ai-git" ]; then
+        echo "Error: Failed to purge syno-ai-git folder after retry."
         exit 1
     fi
 fi
 
 # 4. Clone the repository (development branch)
 echo "Cloning the repository (development branch)..."
-git clone --branch development https://github.com/synotechai/syno-ai syno-ai
+git clone --branch development https://github.com/synotechai/syno-ai syno-ai-git
 if [ $? -ne 0 ]; then
     echo "Error cloning the repository."
     exit 1
 fi
 
 # 5. Change directory to syno-ai
-cd syno-ai || { echo "Error changing directory"; exit 1; }
+# cd syno-ai || { echo "Error changing directory"; exit 1; }
 
 # 6. Install requirements
 echo "Installing requirements from requirements.txt..."
-pip install -r requirements.txt
+pip install -r ./syno-ai-git/requirements.txt
+if [ $? -ne 0 ]; then
+    echo "Error installing requirements."
+    exit 1
+fi
+
+pip install -r ./syno-ai-git/bundle/requirements.txt
 if [ $? -ne 0 ]; then
     echo "Error installing requirements."
     exit 1
@@ -61,7 +67,7 @@ fi
 
 # 8. Run bundle.py
 echo "Running bundle.py..."
-python ./bundle/bundle.py
+python ./syno-ai-git/bundle/bundle.py
 if [ $? -ne 0 ]; then
     echo "Error running bundle.py."
     exit 1
@@ -84,22 +90,24 @@ fi
 
 # 9. Create macOS package
 echo "Creating macOS package..."
-pkgbuild --root ./dist/syno-ai \
+pkgbuild --root ./syno-ai-git/bundle/dist/syno-ai \
          --identifier synotechai.syno-ai \
-         --install-location /tmp/syno-ai \
-         --scripts ./mac_pkg_scripts \
+         --install-location "$HOME/Library/Application Support/syno-ai/install" \
+         --scripts ./syno-ai-git/bundle/mac_pkg_scripts \
+         --ownership preserve \
          syno-ai-preinstalled-mac-m1.pkg
+
 if [ $? -ne 0 ]; then
     echo "Error creating macOS package."
     exit 1
 fi
 
-# 10. Remove the syno-ai folder
-echo "Deleting syno-ai folder..."
+# 10. Remove the syno-ai-git folder
+echo "Deleting syno-ai-git folder..."
 cd ..
-rm -rf syno-ai
-if [ -d "syno-ai" ]; then
-    echo "Error: Failed to delete syno-ai folder."
+rm -rf syno-ai-git
+if [ -d "syno-ai-git" ]; then
+    echo "Error: Failed to delete syno-ai-git folder."
     exit 1
 fi
 
