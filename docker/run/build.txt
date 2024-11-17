@@ -3,4 +3,4 @@ docker build -t syno-ai-run:latest .
 
 # dockerhub
 docker login
-docker buildx build --platform linux/amd64,linux/arm64 -t synotechai/syno-ai-run:latest --push .
+docker buildx build --platform linux/amd64,linux/arm64 -t synotechai/syno-ai-run:testing --push .
