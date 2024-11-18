@@ -1,5 +1,3 @@
-version: '3'
-
 services:
   syno-ai:
     container_name: syno-ai
@@ -7,4 +5,4 @@ services:
     volumes:
       - ./syno-ai:/a0
     ports:
-      - "8080:80"
+      - "50080:80"
