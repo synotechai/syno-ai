@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Constants
-IMAGE_NAME="syno-ai-run"
+IMAGE_NAME="synotechai/syno-ai-run"
 DEFAULT_CONTAINER_NAME="syno-ai"
 BASE_PORT=50080
 
