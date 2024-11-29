@@ -1,10 +1,10 @@
 <div align="center">
 
-![Syno AI](docs/res/header.png)
+![Syno AI](docs/res/syno-tech-banner.png)
 
 # `Syno AI`
 
-[![Thanks to Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-Thanks%20to%20Sponsors-FF69B4?style=for-the-badge&logo=githubsponsors&logoColor=white)](https://github.com/sponsors/synotechai) [![Follow on X.com](https://img.shields.io/badge/X.com-Follow-1DA1F2?style=for-the-badge&logo=x&logoColor=white)](https://x.com/FluxFrameworks)
+[![Thanks to Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-Thanks%20to%20Sponsors-FF69B4?style=for-the-badge&logo=githubsponsors&logoColor=white)](https://github.com/sponsors/synotechai) [![Follow on X.com](https://img.shields.io/badge/X.com-Follow-1DA1F2?style=for-the-badge&logo=x&logoColor=white)](https://x.com/FLUXFRAMEW0RK)
 
 
 [Installation](docs/installation.md) •
@@ -42,11 +42,11 @@
 3. **Multi-Agent Collaboration**
 
 - **Syno AI (Root Agent):** Directly interacts with the user, processing requests and managing workflows.
-- **Subordinate Agents:** Flux can spawn specialized sub-agents to break down and complete complex tasks in parallel.
+- **Agent Echo (Subordinate Agent):** Flux can spawn Echo as a specialized sub-agent to break down and complete complex tasks in parallel.
 
 By delegating tasks strategically, Syno AI maintains cleaner context, increased efficiency, and scalable problem-solving.
 
-![Multi-agent 2](docs/res/physics-2.png)
+![Multi-agent 2](docs/res/Agent_Echo_Generating.png)
 
 4. **Fully Customizable and Extensible**
 
@@ -99,7 +99,6 @@ docker run -p 50001:80 synotechai/syno-ai-run
 # Visit http://localhost:50001 to start
 ```
 
-- Developers and contributors: download the full binaries for your system from the [releases page](https://github.com/synotechai/syno-ai/releases) and then follow the instructions [provided here](docs/installation.md#in-depth-guide-for-full-binaries-installation).
 
 ## 🐳 Fully Dockerized, with Speech-to-Text and TTS
 

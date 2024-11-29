@@ -11,7 +11,7 @@ To begin with Syno AI, follow the links below for detailed guides on various top
 ### Your experience with Syno AI starts now!
 
 - **Download Syno AI:** Follow the [installation guide](installation.md) to download and run Syno AI.
-- **Join the Community:** Join the Syno AI [Skool](https://www.skool.com/syno-ai) or [Discord](https://discord.gg/Z2tun2N3) community to discuss ideas, ask questions, and collaborate with other contributors.
+- **Join the Community:** Join the Syno AI [Discord](https://discord.gg/bF9RYYX5hD) community to discuss ideas, ask questions, and collaborate with other contributors.
 - **Share your Work:** Share your Syno AI creations, workflows and discoverings on our [Show and Tell](https://github.com/synotechai/syno-ai/discussions/categories/show-and-tell) area on GitHub.
 - **Report Issues:** Use the [GitHub issue tracker](https://github.com/synotechai/syno-ai/issues) to report framework-relative bugs or suggest new features.
 
