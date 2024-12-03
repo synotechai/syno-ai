@@ -3,7 +3,7 @@ from collections import OrderedDict
 from dataclasses import dataclass, field
 import time, importlib, inspect, os, json
 import token
-from typing import Any, Awaitable, Optional, Dict, TypedDict
+from typing import Any, Awaitable, Coroutine, Optional, Dict, TypedDict
 import uuid
 import models
 
@@ -44,7 +44,7 @@ class AgentContext:
         self.agent0 = agent0 or Agent(0, self.config, self)
         self.paused = paused
         self.streaming_agent = streaming_agent
-        self.process: DeferredTask | None = None
+        self.task: DeferredTask | None = None
         AgentContext._counter += 1
         self.no = AgentContext._counter
 
@@ -66,13 +66,13 @@ class AgentContext:
     @staticmethod
     def remove(id: str):
         context = AgentContext._contexts.pop(id, None)
-        if context and context.process:
-            context.process.kill()
+        if context and context.task:
+            context.task.kill()
         return context
 
     def kill_process(self):
-        if self.process:
-            self.process.kill()
+        if self.task:
+            self.task.kill()
 
     def reset(self):
         self.kill_process()
@@ -99,7 +99,7 @@ class AgentContext:
         else:
             current_agent = self.agent0
 
-        if self.process and self.process.is_alive():
+        if self.task and self.task.is_alive():
             # set intervention messages to agent(s):
             intervention_agent = current_agent
             while intervention_agent and broadcast_level != 0:
@@ -109,11 +109,19 @@ class AgentContext:
                     Agent.DATA_NAME_SUPERIOR, None
                 )
         else:
+            self.task = self.run_task(self._process_chain, current_agent, msg)
 
-            # self.process = DeferredTask(current_agent.monologue, msg)
-            self.process = DeferredTask(self._process_chain, current_agent, msg)
+        return self.task
 
-        return self.process
+    def run_task(
+        self, func: Callable[..., Coroutine[Any, Any, Any]], *args: Any, **kwargs: Any
+    ):
+        if not self.task:
+            self.task = DeferredTask(
+                thread_name=self.__class__.__name__,
+            )
+        self.task.start_task(func, *args, **kwargs)
+        return self.task
 
     # this wrapper ensures that superior agents are called back if the chat was loaded from file and original callstack is gone
     async def _process_chain(self, agent: "Agent", msg: "UserMessage|str", user=True):
@@ -138,11 +146,12 @@ class AgentContext:
 class ModelConfig:
     provider: models.ModelProvider
     name: str
-    ctx_length: int
-    limit_requests: int
-    limit_input: int
-    limit_output: int
-    kwargs: dict
+    ctx_length: int = 0
+    limit_requests: int = 0
+    limit_input: int = 0
+    limit_output: int = 0
+    vision: bool = False
+    kwargs: dict = field(default_factory=dict)
 
 
 @dataclass
@@ -150,6 +159,7 @@ class AgentConfig:
     chat_model: ModelConfig
     utility_model: ModelConfig
     embeddings_model: ModelConfig
+    browser_model: ModelConfig
     prompts_subdir: str = ""
     memory_subdir: str = ""
     knowledge_subdirs: list[str] = field(default_factory=lambda: ["default", "custom"])
@@ -231,13 +241,6 @@ class Agent:
         self.history = history.History(self)
         self.last_user_message: history.Message | None = None
         self.intervention: UserMessage | None = None
-        self.rate_limiter = rate_limiter.RateLimiter(
-            self.context.log,
-            max_calls=self.config.rate_limit_requests,
-            max_input_tokens=self.config.rate_limit_input_tokens,
-            max_output_tokens=self.config.rate_limit_output_tokens,
-            window_seconds=self.config.rate_limit_seconds,
-        )
         self.data = {}  # free data object all the tools can use
 
     async def monologue(self):
@@ -258,15 +261,7 @@ class Agent:
 
                     try:
                         # prepare LLM chain (model, system, history)
-                        chain, prompt = await self.prepare_chain(
-                            loop_data=self.loop_data
-                        )
-
-                        # rate limiter TODO - move to extension, make per-model
-                        formatted_inputs = prompt.format()
-                        self.set_data(self.DATA_NAME_CTX_WINDOW, formatted_inputs)
-                        token_count = tokens.approximate_tokens(formatted_inputs)
-                        self.rate_limiter.limit_call_and_input(token_count)
+                        prompt = await self.prepare_prompt(loop_data=self.loop_data)
 
                         # output that the agent is starting
                         PrintStyle(
@@ -279,9 +274,11 @@ class Agent:
                             type="agent", heading=f"{self.agent_name}: Generating"
                         )
 
-                        async for chunk in chain.astream({}):
-                            # wait for intervention and handle it, if paused
-                            await self.handle_intervention(agent_response)
+                        async def stream_callback(chunk: str, full: str):
+                            # output the agent response stream
+                            if chunk:
+                                printer.stream(chunk)
+                                self.log_from_stream(full, log)
 
                         # store as last context window content
                         self.set_data(Agent.DATA_NAME_CTX_WINDOW, prompt.format())
@@ -342,7 +339,7 @@ class Agent:
                 # call monologue_end extensions
                 await self.call_extensions("monologue_end", loop_data=self.loop_data)  # type: ignore
 
-    async def prepare_chain(self, loop_data: LoopData):
+    async def prepare_prompt(self, loop_data: LoopData) -> ChatPromptTemplate:
         # set system prompt and message history
         loop_data.system = await self.get_system_prompt(self.loop_data)
         loop_data.history_output = self.history.output()
@@ -371,10 +368,7 @@ class Agent:
                 *history_langchain,
             ]
         )
-
-        # return callable chain
-        chain = prompt | self.config.chat_model
-        return chain, prompt
+        return prompt
 
     def handle_critical_exception(self, exception: Exception):
         if isinstance(exception, HandledException):
@@ -495,6 +489,30 @@ class Agent:
     ):  # TODO add param for message range, topic, history
         return self.history.output_text(human_label="user", ai_label="assistant")
 
+    def get_chat_model(self):
+        return models.get_model(
+            models.ModelType.CHAT,
+            self.config.chat_model.provider,
+            self.config.chat_model.name,
+            **self.config.chat_model.kwargs,
+        )
+
+    def get_utility_model(self):
+        return models.get_model(
+            models.ModelType.CHAT,
+            self.config.utility_model.provider,
+            self.config.utility_model.name,
+            **self.config.utility_model.kwargs,
+        )
+
+    def get_embedding_model(self):
+        return models.get_model(
+            models.ModelType.EMBEDDING,
+            self.config.embeddings_model.provider,
+            self.config.embeddings_model.name,
+            **self.config.embeddings_model.kwargs,
+        )
+
     async def call_utility_model(
         self,
         system: str,
@@ -509,12 +527,7 @@ class Agent:
         response = ""
 
         # model class
-        model = models.get_model(
-            models.ModelType.CHAT,
-            self.config.utility_model.provider,
-            self.config.utility_model.name,
-            **self.config.utility_model.kwargs,
-        )
+        model = self.get_utility_model()
 
         # rate limiter
         limiter = await self.rate_limiter(
@@ -533,6 +546,63 @@ class Agent:
 
         return response
 
+    async def call_chat_model(
+        self,
+        prompt: ChatPromptTemplate,
+        callback: Callable[[str, str], Awaitable[None]] | None = None,
+    ):
+        response = ""
+
+        # model class
+        model = self.get_chat_model()
+
+        # rate limiter
+        limiter = await self.rate_limiter(self.config.chat_model, prompt.format())
+
+        async for chunk in (prompt | model).astream({}):
+            await self.handle_intervention()  # wait for intervention and handle it, if paused
+
+            content = models.parse_chunk(chunk)
+            limiter.add(output=tokens.approximate_tokens(content))
+            response += content
+
+            if callback:
+                await callback(content, response)
+
+        return response
+
+    async def rate_limiter(
+        self, model_config: ModelConfig, input: str, background: bool = False
+    ):
+        # rate limiter log
+        wait_log = None
+
+        async def wait_callback(msg: str, key: str, total: int, limit: int):
+            nonlocal wait_log
+            if not wait_log:
+                wait_log = self.context.log.log(
+                    type="util",
+                    update_progress="none",
+                    heading=msg,
+                    model=f"{model_config.provider.value}\\{model_config.name}",
+                )
+            wait_log.update(heading=msg, key=key, value=total, limit=limit)
+            if not background:
+                self.context.log.set_progress(msg, -1)
+
+        # rate limiter
+        limiter = models.get_rate_limiter(
+            model_config.provider,
+            model_config.name,
+            model_config.limit_requests,
+            model_config.limit_input,
+            model_config.limit_output,
+        )
+        limiter.add(input=tokens.approximate_tokens(input))
+        limiter.add(requests=1)
+        await limiter.wait(callback=wait_callback)
+        return limiter
+
     async def handle_intervention(self, progress: str = ""):
         while self.context.paused:
             await asyncio.sleep(0.1)  # wait if paused
@@ -546,6 +616,10 @@ class Agent:
             # append the intervention message
             await self.hist_add_user_message(msg, intervention=True)
             raise InterventionException(msg)
+
+    async def wait_if_paused(self):
+        while self.context.paused:
+            await asyncio.sleep(0.1)
 
     async def process_tools(self, msg: str):
         # search for tool usage requests in agent message

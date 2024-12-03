@@ -26,16 +26,14 @@ from langchain_google_genai import (
     embeddings as google_embeddings,
 )
 from langchain_mistralai import ChatMistralAI
-from pydantic.v1.types import SecretStr
-from python.helpers import dotenv
+
+# from pydantic.v1.types import SecretStr
+from python.helpers import dotenv, runtime
 from python.helpers.dotenv import load_dotenv
 from python.helpers.rate_limiter import RateLimiter
 
 # environment variables
 load_dotenv()
-
-# Configuration
-DEFAULT_TEMPERATURE = 0.0
 
 
 class ModelType(Enum):
@@ -45,9 +43,10 @@ class ModelType(Enum):
 
 class ModelProvider(Enum):
     ANTHROPIC = "Anthropic"
-    HUGGINGFACE = "HuggingFace"
+    DEEPSEEK = "DeepSeek"
     GOOGLE = "Google"
     GROQ = "Groq"
+    HUGGINGFACE = "HuggingFace"
     LMSTUDIO = "LM Studio"
     MISTRALAI = "Mistral AI"
     OLLAMA = "Ollama"
@@ -76,19 +75,47 @@ def get_model(type: ModelType, provider: ModelProvider, name: str, **kwargs):
     return model
 
 
+def get_rate_limiter(
+    provider: ModelProvider, name: str, requests: int, input: int, output: int
+) -> RateLimiter:
+    # get or create
+    key = f"{provider.name}\\{name}"
+    rate_limiters[key] = limiter = rate_limiters.get(key, RateLimiter(seconds=60))
+    # always update
+    limiter.limits["requests"] = requests or 0
+    limiter.limits["input"] = input or 0
+    limiter.limits["output"] = output or 0
+    return limiter
+
+
+def parse_chunk(chunk: Any):
+    if isinstance(chunk, str):
+        content = chunk
+    elif hasattr(chunk, "content"):
+        content = str(chunk.content)
+    else:
+        content = str(chunk)
+    return content
+
+
 # Ollama models
+def get_ollama_base_url():
+    return (
+        dotenv.get_dotenv_value("OLLAMA_BASE_URL")
+        or f"http://{runtime.get_local_url()}:11434"
+    )
+
+
 def get_ollama_chat(
     model_name: str,
-    temperature=DEFAULT_TEMPERATURE,
     base_url=None,
     num_ctx=8192,
     **kwargs,
 ):
     if not base_url:
-        base_url = dotenv.get_dotenv_value("OLLAMA_BASE_URL") or "http://127.0.0.1:11434"
+        base_url = get_ollama_base_url()
     return ChatOllama(
         model=model_name,
-        temperature=temperature,
         base_url=base_url,
         num_ctx=num_ctx,
         **kwargs,
@@ -97,14 +124,14 @@ def get_ollama_chat(
 
 def get_ollama_embedding(
     model_name: str,
-    temperature=DEFAULT_TEMPERATURE,
     base_url=None,
+    num_ctx=8192,
     **kwargs,
 ):
     if not base_url:
-        base_url = dotenv.get_dotenv_value("OLLAMA_BASE_URL") or "http://127.0.0.1:11434"
+        base_url = get_ollama_base_url()
     return OllamaEmbeddings(
-        model=model_name, temperature=temperature, base_url=base_url, **kwargs
+        model=model_name, base_url=base_url, num_ctx=num_ctx, **kwargs
     )
 
 
@@ -112,7 +139,6 @@ def get_ollama_embedding(
 def get_huggingface_chat(
     model_name: str,
     api_key=None,
-    temperature=DEFAULT_TEMPERATURE,
     **kwargs,
 ):
     # different naming convention here
@@ -124,7 +150,6 @@ def get_huggingface_chat(
         repo_id=model_name,
         task="text-generation",
         do_sample=True,
-        temperature=temperature,
         **kwargs,
     )
 
@@ -137,22 +162,30 @@ def get_huggingface_embedding(model_name: str, **kwargs):
 
 
 # LM Studio and other OpenAI compatible interfaces
+def get_lmstudio_base_url():
+    return (
+        dotenv.get_dotenv_value("LM_STUDIO_BASE_URL")
+        or f"http://{runtime.get_local_url()}:1234/v1"
+    )
+
+
 def get_lmstudio_chat(
     model_name: str,
-    temperature=DEFAULT_TEMPERATURE,
-    base_url=dotenv.get_dotenv_value("LM_STUDIO_BASE_URL")
-    or "http://127.0.0.1:1234/v1",
+    base_url=None,
     **kwargs,
 ):
-    return ChatOpenAI(model_name=model_name, base_url=base_url, temperature=temperature, api_key="none", **kwargs)  # type: ignore
+    if not base_url:
+        base_url = get_lmstudio_base_url()
+    return ChatOpenAI(model_name=model_name, base_url=base_url, api_key="none", **kwargs)  # type: ignore
 
 
 def get_lmstudio_embedding(
     model_name: str,
-    base_url=dotenv.get_dotenv_value("LM_STUDIO_BASE_URL")
-    or "http://127.0.0.1:1234/v1",
+    base_url=None,
     **kwargs,
 ):
+    if not base_url:
+        base_url = get_lmstudio_base_url()
     return OpenAIEmbeddings(model=model_name, api_key="none", base_url=base_url, check_embedding_ctx_length=False, **kwargs)  # type: ignore
 
 
@@ -160,12 +193,16 @@ def get_lmstudio_embedding(
 def get_anthropic_chat(
     model_name: str,
     api_key=None,
-    temperature=DEFAULT_TEMPERATURE,
+    base_url=None,
     **kwargs,
 ):
     if not api_key:
         api_key = get_api_key("anthropic")
-    return ChatAnthropic(model_name=model_name, temperature=temperature, api_key=api_key, **kwargs)  # type: ignore
+    if not base_url:
+        base_url = (
+            dotenv.get_dotenv_value("ANTHROPIC_BASE_URL") or "https://api.anthropic.com"
+        )
+    return ChatAnthropic(model_name=model_name, api_key=api_key, base_url=base_url, **kwargs)  # type: ignore
 
 
 # right now anthropic does not have embedding models, but that might change
@@ -183,12 +220,11 @@ def get_anthropic_embedding(
 def get_openai_chat(
     model_name: str,
     api_key=None,
-    temperature=DEFAULT_TEMPERATURE,
     **kwargs,
 ):
     if not api_key:
         api_key = get_api_key("openai")
-    return ChatOpenAI(model_name=model_name, temperature=temperature, api_key=api_key, **kwargs)  # type: ignore
+    return ChatOpenAI(model_name=model_name, api_key=api_key, **kwargs)  # type: ignore
 
 
 def get_openai_embedding(model_name: str, api_key=None, **kwargs):
@@ -197,10 +233,9 @@ def get_openai_embedding(model_name: str, api_key=None, **kwargs):
     return OpenAIEmbeddings(model=model_name, api_key=api_key, **kwargs)  # type: ignore
 
 
-def get_azure_openai_chat(
+def get_openai_azure_chat(
     deployment_name: str,
     api_key=None,
-    temperature=DEFAULT_TEMPERATURE,
     azure_endpoint=None,
     **kwargs,
 ):
@@ -208,10 +243,10 @@ def get_azure_openai_chat(
         api_key = get_api_key("openai_azure")
     if not azure_endpoint:
         azure_endpoint = dotenv.get_dotenv_value("OPENAI_AZURE_ENDPOINT")
-    return AzureChatOpenAI(deployment_name=deployment_name, temperature=temperature, api_key=api_key, azure_endpoint=azure_endpoint, **kwargs)  # type: ignore
+    return AzureChatOpenAI(deployment_name=deployment_name, api_key=api_key, azure_endpoint=azure_endpoint, **kwargs)  # type: ignore
 
 
-def get_azure_openai_embedding(
+def get_openai_azure_embedding(
     deployment_name: str,
     api_key=None,
     azure_endpoint=None,
@@ -228,12 +263,11 @@ def get_azure_openai_embedding(
 def get_google_chat(
     model_name: str,
     api_key=None,
-    temperature=DEFAULT_TEMPERATURE,
     **kwargs,
 ):
     if not api_key:
-        api_key = get_api_key("google") 
-    return GoogleGenerativeAI(model=model_name, temperature=temperature, google_api_key=api_key, safety_settings={HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE}, **kwargs)  # type: ignore
+        api_key = get_api_key("google")
+    return GoogleGenerativeAI(model=model_name, google_api_key=api_key, safety_settings={HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE}, **kwargs)  # type: ignore
 
 
 def get_google_embedding(
@@ -247,42 +281,62 @@ def get_google_embedding(
 
 
 # Mistral models
-def get_mistral_chat(
+def get_mistralai_chat(
     model_name: str,
     api_key=None,
-    temperature=DEFAULT_TEMPERATURE,
     **kwargs,
 ):
     if not api_key:
         api_key = get_api_key("mistral")
-    return ChatMistralAI(model=model_name, temperature=temperature, api_key=api_key, **kwargs)  # type: ignore
+    return ChatMistralAI(model=model_name, api_key=api_key, **kwargs)  # type: ignore
 
 
 # Groq models
 def get_groq_chat(
     model_name: str,
     api_key=None,
-    temperature=DEFAULT_TEMPERATURE,
     **kwargs,
 ):
     if not api_key:
         api_key = get_api_key("groq")
-    return ChatGroq(model_name=model_name, temperature=temperature, api_key=api_key, **kwargs)  # type: ignore
+    return ChatGroq(model_name=model_name, api_key=api_key, **kwargs)  # type: ignore
 
+
+# DeepSeek models
+def get_deepseek_chat(
+    model_name: str,
+    api_key=None,
+    base_url=None,
+    **kwargs,
+):
+    if not api_key:
+        api_key = get_api_key("deepseek")
+    if not base_url:
+        base_url = (
+            dotenv.get_dotenv_value("DEEPSEEK_BASE_URL") or "https://api.deepseek.com"
+        )
+    
+    model = ChatOpenAI(api_key=api_key, model=model_name, base_url=base_url, **kwargs)  # type: ignore
+    # little hack for reasoning model's problem with temperature
+    if not "temperature" in kwargs:
+        model.temperature = None # type: ignore
+    return model
 
 # OpenRouter models
 def get_openrouter_chat(
     model_name: str,
     api_key=None,
-    temperature=DEFAULT_TEMPERATURE,
     base_url=None,
     **kwargs,
 ):
     if not api_key:
         api_key = get_api_key("openrouter")
     if not base_url:
-        base_url = dotenv.get_dotenv_value("OPEN_ROUTER_BASE_URL") or "https://openrouter.ai/api/v1"
-    return ChatOpenAI(api_key=api_key, model=model_name, temperature=temperature, base_url=base_url, **kwargs)  # type: ignore
+        base_url = (
+            dotenv.get_dotenv_value("OPEN_ROUTER_BASE_URL")
+            or "https://openrouter.ai/api/v1"
+        )
+    return ChatOpenAI(api_key=api_key, model=model_name, base_url=base_url, **kwargs)  # type: ignore
 
 
 def get_openrouter_embedding(
@@ -294,7 +348,10 @@ def get_openrouter_embedding(
     if not api_key:
         api_key = get_api_key("openrouter")
     if not base_url:
-        base_url = dotenv.get_dotenv_value("OPEN_ROUTER_BASE_URL") or "https://openrouter.ai/api/v1"
+        base_url = (
+            dotenv.get_dotenv_value("OPEN_ROUTER_BASE_URL")
+            or "https://openrouter.ai/api/v1"
+        )
     return OpenAIEmbeddings(model=model_name, api_key=api_key, base_url=base_url, **kwargs)  # type: ignore
 
 
@@ -302,7 +359,6 @@ def get_openrouter_embedding(
 def get_sambanova_chat(
     model_name: str,
     api_key=None,
-    temperature=DEFAULT_TEMPERATURE,
     base_url=None,
     max_tokens=1024,
     **kwargs,
@@ -310,8 +366,11 @@ def get_sambanova_chat(
     if not api_key:
         api_key = get_api_key("sambanova")
     if not base_url:
-        base_url = dotenv.get_dotenv_value("SAMBANOVA_BASE_URL") or "https://fast-api.snova.ai/v1"
-    return ChatOpenAI(api_key=api_key, model=model_name, temperature=temperature, base_url=base_url, max_tokens=max_tokens, **kwargs)  # type: ignore
+        base_url = (
+            dotenv.get_dotenv_value("SAMBANOVA_BASE_URL")
+            or "https://fast-api.snova.ai/v1"
+        )
+    return ChatOpenAI(api_key=api_key, model=model_name, base_url=base_url, max_tokens=max_tokens, **kwargs)  # type: ignore
 
 
 # right now sambanova does not have embedding models, but that might change
@@ -324,7 +383,10 @@ def get_sambanova_embedding(
     if not api_key:
         api_key = get_api_key("sambanova")
     if not base_url:
-        base_url = dotenv.get_dotenv_value("SAMBANOVA_BASE_URL") or "https://fast-api.snova.ai/v1"
+        base_url = (
+            dotenv.get_dotenv_value("SAMBANOVA_BASE_URL")
+            or "https://fast-api.snova.ai/v1"
+        )
     return OpenAIEmbeddings(model=model_name, api_key=api_key, base_url=base_url, **kwargs)  # type: ignore
 
 
@@ -332,11 +394,10 @@ def get_sambanova_embedding(
 def get_other_chat(
     model_name: str,
     api_key=None,
-    temperature=DEFAULT_TEMPERATURE,
     base_url=None,
     **kwargs,
 ):
-    return ChatOpenAI(api_key=api_key, model=model_name, temperature=temperature, base_url=base_url, **kwargs)  # type: ignore
+    return ChatOpenAI(api_key=api_key, model=model_name, base_url=base_url, **kwargs)  # type: ignore
 
 
 def get_other_embedding(model_name: str, api_key=None, base_url=None, **kwargs):

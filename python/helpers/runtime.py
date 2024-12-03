@@ -1,7 +1,10 @@
 import argparse
 import inspect
-from typing import Any, Callable
+from typing import TypeVar, Callable, Awaitable, Union, overload, cast
 from python.helpers import dotenv, rfc, settings
+
+T = TypeVar('T')
+R = TypeVar('R')
 
 parser = argparse.ArgumentParser()
 args = {}
@@ -47,11 +50,22 @@ def is_dockerized() -> bool:
 def is_development() -> bool:
     return not is_dockerized()
 
-async def call_development_function(func: Callable, *args, **kwargs):
+def get_local_url():
+    if is_dockerized():
+        return "host.docker.internal"
+    return "127.0.0.1"
+
+@overload
+async def call_development_function(func: Callable[..., Awaitable[T]], *args, **kwargs) -> T: ...
+
+@overload
+async def call_development_function(func: Callable[..., T], *args, **kwargs) -> T: ...
+
+async def call_development_function(func: Union[Callable[..., T], Callable[..., Awaitable[T]]], *args, **kwargs) -> T:
     if is_development():
         url = _get_rfc_url()
         password = _get_rfc_password()
-        return await rfc.call_rfc(
+        result = await rfc.call_rfc(
             url=url,
             password=password,
             module=func.__module__,
@@ -59,11 +73,12 @@ async def call_development_function(func: Callable, *args, **kwargs):
             args=list(args),
             kwargs=kwargs,
         )
+        return cast(T, result)
     else:
         if inspect.iscoroutinefunction(func):
             return await func(*args, **kwargs)
         else:
-            return func(*args, **kwargs)
+            return func(*args, **kwargs) # type: ignore
 
 
 async def handle_rfc(rfc_call: rfc.RFCCall):

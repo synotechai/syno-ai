@@ -7,13 +7,11 @@ if [ -z "$1" ]; then
 fi
 BRANCH="$1"
 
-
+# clone project repo branch
 git clone -b "$BRANCH" "https://github.com/synotechai/syno-ai" "/git/syno-ai"
 
-
-# Create and activate Python virtual environment
-python3 -m venv /opt/venv
-source /opt/venv/bin/activate
+# setup python environment
+. "/ins/setup_venv.sh" "$@"
 
 # Ensure the virtual environment and pip setup
 pip install --upgrade pip ipython requests
@@ -25,4 +23,4 @@ pip install torch --index-url https://download.pytorch.org/whl/cpu
 pip install -r /git/syno-ai/requirements.txt
 
 # Preload A0
-python /git/syno-ai/preload.py
+python /git/syno-ai/preload.py --dockerized=true

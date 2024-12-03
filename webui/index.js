@@ -12,6 +12,8 @@ const statusSection = document.getElementById('status-section');
 const chatsSection = document.getElementById('chats-section');
 const progressBar = document.getElementById('progress-bar');
 const autoScrollSwitch = document.getElementById('auto-scroll-switch');
+const timeDate = document.getElementById('time-date-container');
+
 
 let autoScroll = true;
 let context = "";
@@ -159,7 +161,7 @@ export async function sendMessage() {
             adjustTextareaHeight();
         }
     } catch (e) {
-        toast(e.message, "error");
+        toastFetchError("Error sending message", e);
     }
 }
 
@@ -261,23 +263,27 @@ window.loadKnowledge = async function () {
     input.multiple = true;
 
     input.onchange = async () => {
-        const formData = new FormData();
-        for (let file of input.files) {
-            formData.append('files[]', file);
-        }
+        try {
+            const formData = new FormData();
+            for (let file of input.files) {
+                formData.append('files[]', file);
+            }
 
-        formData.append('ctxid', getContext());
+            formData.append('ctxid', getContext());
 
-        const response = await fetch('/import_knowledge', {
-            method: 'POST',
-            body: formData,
-        });
+            const response = await fetch('/import_knowledge', {
+                method: 'POST',
+                body: formData,
+            });
 
-        if (!response.ok) {
-            toast(await response.text(), "error");
-        } else {
-            const data = await response.json();
-            toast("Knowledge files imported: " + data.filenames.join(", "), "success");
+            if (!response.ok) {
+                toast(await response.text(), "error");
+            } else {
+                const data = await response.json();
+                toast("Knowledge files imported: " + data.filenames.join(", "), "success");
+            }
+        } catch (e) {
+            toastFetchError("Error loading knowledge", e);
         }
     };
 
@@ -360,11 +366,7 @@ async function poll() {
         inputAD.paused = response.paused;
 
         // Update status icon state
-        const timeDate = document.getElementById('time-date-container');
-        if (timeDate) {
-            const statusIcon = Alpine.$data(timeDate.querySelector('.status-icon'));
-            statusIcon.connected = true;
-        }
+        setConnectionStatus(true);
 
         const chatsAD = Alpine.$data(chatsSection);
         chatsAD.contexts = response.contexts;
@@ -374,11 +376,7 @@ async function poll() {
 
     } catch (error) {
         console.error('Error:', error);
-        const timeDate = document.getElementById('time-date-container');
-        if (timeDate) {
-            const statusIcon = Alpine.$data(timeDate.querySelector('.status-icon'));
-            statusIcon.connected = false;
-        }
+        setConnectionStatus(false);
     }
 
     return updated;
@@ -538,6 +536,59 @@ window.nudge = async function () {
         const resp = await sendJsonData("/nudge", { ctxid: getContext() });
     } catch (e) {
         toast(e.message, "error");
+    }
+};
+
+window.restart = async function () {
+    try {
+        const resp = await sendJsonData("/restart", {});
+    } catch (e) {
+        //error expected here
+        toast("Restarting...", "info", 0);
+        while (true) {
+            try {
+                // try health check until server is back up again
+                const resp = await sendJsonData("/health", {});
+                await new Promise(resolve => setTimeout(resolve, 250));
+                toast("Restarted", "success", 2000);
+                return;
+            } catch (e) {
+                continue;
+            }
+        }
+
+    }
+};
+
+window.restart = async function () {
+    try {
+        if (!getConnectionStatus()) {
+            toast("Backend disconnected, cannot restart.", "error");
+            return;
+        }
+        // First try to initiate restart
+        const resp = await sendJsonData("/restart", {});
+    } catch (e) {
+        //error expected here
+        toast("Restarting...", "info", 0);
+        while (true) {
+            try {
+                const resp = await sendJsonData("/health", {});
+                // Server is back up, show success message
+                await new Promise(resolve => setTimeout(resolve, 250));
+                toast("Restarted", "success", 2000);
+                return;
+            } catch (e) {
+                // Server still down, keep waiting
+                retries++;
+                await new Promise(resolve => setTimeout(resolve, 250));
+            }
+        }
+
+        // If we get here, restart failed or took too long
+        hideToast();
+        await new Promise(resolve => setTimeout(resolve, 400));
+        toast("Restart timed out or failed", "error", 5000);
     }
 };
 
@@ -777,6 +828,70 @@ function toast(text, type = 'info', timeout = 5000) {
         updateAndShowToast();
     }
 }
+window.toast = toast
+
+function hideToast() {
+    const toast = document.getElementById('toast');
+
+    // Add the close button event listener
+    const closeButton = document.querySelector('.toast__close');
+    closeButton.onclick = () => {
+        hideToast();
+    };
+
+    // Add the copy button event listener
+    copyButton.onclick = () => {
+        navigator.clipboard.writeText(text);
+        copyButton.textContent = 'Copied!';
+        setTimeout(() => {
+            copyButton.textContent = 'Copy';
+        }, 2000);
+    };
+
+    // Show the toast
+    toast.style.display = 'flex';
+    // Force a reflow to ensure the animation triggers
+    void toast.offsetWidth;
+    toast.classList.add('show');
+
+    // Set timeout if specified
+    if (timeout) {
+        const minTimeout = Math.max(timeout, 5000);
+        toast.timeoutId = setTimeout(() => {
+            hideToast();
+        }, minTimeout);
+    }
+};
+
+if (isVisible) {
+    // If a toast is visible, hide it first then show the new one
+    toast.classList.remove('show');
+    toast.classList.add('hide');
+
+    // Wait for hide animation to complete before showing new toast
+    setTimeout(() => {
+        toast.classList.remove('hide');
+        updateAndShowToast();
+    }, 400); // Match this with CSS transition duration
+} else {
+    // If no toast is visible, show the new one immediately
+    updateAndShowToast();
+}
+
+// Clear any existing timeout
+if (toast.timeoutId) {
+    clearTimeout(toast.timeoutId);
+    toast.timeoutId = null;
+}
+
+toast.classList.remove('show');
+toast.classList.add('hide');
+
+// Wait for the hide animation to complete before removing from display
+setTimeout(() => {
+    toast.style.display = 'none';
+    toast.classList.remove('hide');
+}, 400); // Match this with CSS transition duration
 
 function hideToast() {
     const toast = document.getElementById('toast');
@@ -795,18 +910,6 @@ function hideToast() {
         toast.style.display = 'none';
         toast.classList.remove('hide');
     }, 400); // Match this with CSS transition duration
-}
-
-function hideToast() {
-    const toast = document.getElementById('toast');
-    toast.classList.remove('show');
-    toast.classList.add('hide');
-
-    // Remove the element from display after animation completes
-    setTimeout(() => {
-        toast.style.display = 'none';
-        toast.classList.remove('hide');
-    }, 300); // Match this with animation duration
 }
 
 function scrollChanged(isAtBottom) {
@@ -857,3 +960,83 @@ async function startPolling() {
 }
 
 document.addEventListener("DOMContentLoaded", startPolling);
+
+document.addEventListener('DOMContentLoaded', () => {
+    const dragDropOverlay = document.getElementById('dragdrop-overlay');
+    const inputSection = document.getElementById('input-section');
+    let dragCounter = 0;
+
+    // Prevent default drag behaviors
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        document.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+        }, false);
+    });
+
+    // Handle drag enter
+    document.addEventListener('dragenter', (e) => {
+        dragCounter++;
+        if (dragCounter === 1) {
+            Alpine.$data(dragDropOverlay).isVisible = true;
+        }
+    }, false);
+
+    // Handle drag leave
+    document.addEventListener('dragleave', (e) => {
+        dragCounter--;
+        if (dragCounter === 0) {
+            Alpine.$data(dragDropOverlay).isVisible = false;
+        }
+    }, false);
+
+    // Handle drop
+    dragDropOverlay.addEventListener('drop', (e) => {
+        dragCounter = 0;
+        Alpine.$data(dragDropOverlay).isVisible = false;
+        
+        const inputAD = Alpine.$data(inputSection);
+        const files = e.dataTransfer.files;
+        handleFiles(files, inputAD);
+    }, false);
+});
+
+// Separate file handling logic to be used by both drag-drop and file input
+function handleFiles(files, inputAD) {
+    Array.from(files).forEach(file => {
+        const ext = file.name.split('.').pop().toLowerCase();
+       
+            const isImage = ['jpg', 'jpeg', 'png', 'bmp'].includes(ext);
+            
+            if (isImage) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    inputAD.attachments.push({
+                        file: file,
+                        url: e.target.result,
+                        type: 'image',
+                        name: file.name,
+                        extension: ext
+                    });
+                    inputAD.hasAttachments = true;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                inputAD.attachments.push({
+                    file: file,
+                    type: 'file',
+                    name: file.name,
+                    extension: ext
+                });
+                inputAD.hasAttachments = true;
+            }
+        
+    });
+}
+
+// Modify the existing handleFileUpload to use the new handleFiles function
+window.handleFileUpload = function(event) {
+    const files = event.target.files;
+    const inputAD = Alpine.$data(inputSection);
+    handleFiles(files, inputAD);
+}

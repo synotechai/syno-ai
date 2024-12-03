@@ -1,7 +1,15 @@
 import { getContext } from "../index.js";
 
 export async function openHistoryModal() {
-    const hist = await window.sendJsonData("/history_get", { context: getContext() });
+    try {
+        const hist = await window.sendJsonData("/history_get", { context: getContext() });
+        const data = JSON.stringify(hist.history, null, 4);
+        const size = hist.tokens;
+        await showEditorModal(data, "json", `History ~${size} tokens`, "Conversation history visible to the LLM. History is compressed to fit into the context window over time.");
+    } catch (e) {
+        window.toastFetchError("Error fetching history", e);
+        return;
+    }
     const data = JSON.stringify(hist.history, null, 4);
     const size = hist.tokens;
     await showEditorModal(data, "json", `History ~${size} tokens`, "Conversation history how the agent can see it. History is compressed to fit into the context window.");
@@ -19,7 +27,7 @@ async function showEditorModal(data, type = "json", title, description = "") {
     const html = `<div id="json-viewer-container"></div>`;
 
     // Open the modal with the generated HTML
-    await window.genericModalProxy.openModal(title, description, html);
+    await window.genericModalProxy.openModal(title, description, html, ["history-viewer"]);
 
     // Initialize the JSON Viewer after the modal is rendered
     const container = document.getElementById("json-viewer-container");

@@ -1,6 +1,6 @@
 import asyncio
 import models
-from agent import AgentConfig
+from agent import AgentConfig, ModelConfig
 from python.helpers import dotenv, files, rfc_exchange, runtime, settings, docker, log
 
 
@@ -16,10 +16,7 @@ def initialize():
         limit_requests=current_settings["chat_model_rl_requests"],
         limit_input=current_settings["chat_model_rl_input"],
         limit_output=current_settings["chat_model_rl_output"],
-        kwargs={
-            "temperature": current_settings["chat_model_temperature"],
-            **current_settings["chat_model_kwargs"],
-        },
+        kwargs=current_settings["chat_model_kwargs"],
     )
 
     # utility model from user settings
@@ -30,37 +27,32 @@ def initialize():
         limit_requests=current_settings["util_model_rl_requests"],
         limit_input=current_settings["util_model_rl_input"],
         limit_output=current_settings["util_model_rl_output"],
-        kwargs={
-            "temperature": current_settings["util_model_temperature"],
-            **current_settings["util_model_kwargs"],
-        },
+        kwargs=current_settings["util_model_kwargs"],
     )
     # embedding model from user settings
     embedding_llm = ModelConfig(
         provider=models.ModelProvider[current_settings["embed_model_provider"]],
         name=current_settings["embed_model_name"],
-        ctx_length=0,
         limit_requests=current_settings["embed_model_rl_requests"],
-        limit_input=0,
-        limit_output=0,
-        kwargs={
-            **current_settings["embed_model_kwargs"],
-        },
+        kwargs=current_settings["embed_model_kwargs"],
+    )
+    # browser model from user settings
+    browser_llm = ModelConfig(
+        provider=models.ModelProvider[current_settings["browser_model_provider"]],
+        name=current_settings["browser_model_name"],
+        vision=current_settings["browser_model_vision"],
+        kwargs=current_settings["browser_model_kwargs"],
     )
     # agent configuration
     config = AgentConfig(
         chat_model=chat_llm,
         utility_model=utility_llm,
         embeddings_model=embedding_llm,
+        browser_model=browser_llm,
         prompts_subdir=current_settings["agent_prompts_subdir"],
         memory_subdir=current_settings["agent_memory_subdir"],
         knowledge_subdirs=["default", current_settings["agent_knowledge_subdir"]],
-        # rate_limit_seconds = 60,
-        rate_limit_requests=30,
-        # rate_limit_input_tokens = 0,
-        # rate_limit_output_tokens = 0,
-        # response_timeout_seconds = 60,
-        code_exec_docker_enabled = False,
+        code_exec_docker_enabled=False,
         # code_exec_docker_name = "A0-dev",
         # code_exec_docker_image = "synotechai/syno-ai-run:development",
         # code_exec_docker_ports = { "22/tcp": 55022, "80/tcp": 55080 }
@@ -93,16 +85,12 @@ def args_override(config):
             # conversion based on type of config[key]
             if isinstance(getattr(config, key), bool):
                 value = value.lower().strip() == "true"
-                print("bool", value)
             elif isinstance(getattr(config, key), int):
                 value = int(value)
-                print("int", value)
             elif isinstance(getattr(config, key), float):
                 value = float(value)
-                print("float", value)
             elif isinstance(getattr(config, key), str):
                 value = str(value)
-                print("str", value)
             else:
                 raise Exception(
                     f"Unsupported argument type of '{key}': {type(getattr(config, key))}"
