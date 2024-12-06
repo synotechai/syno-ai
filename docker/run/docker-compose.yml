@@ -1,8 +1,8 @@
 services:
   syno-ai:
-    container_name: syno-ai
-    image: synotechai/syno-ai-run:testing
+    container_name: agent-syno
+    image: synotechai/agent-syno-run:testing
     volumes:
-      - ./syno-ai:/a0
+      - ./agent-syno:/a0
     ports:
       - "50080:80"

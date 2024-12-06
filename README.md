@@ -4,7 +4,7 @@
 
 # `Syno AI`
 
-[![Thanks to Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-Thanks%20to%20Sponsors-FF69B4?style=for-the-badge&logo=githubsponsors&logoColor=white)](https://github.com/sponsors/synotechai) [![Follow on X.com](https://img.shields.io/badge/X.com-Follow-1DA1F2?style=for-the-badge&logo=x&logoColor=white)](https://x.com/FLUXFRAMEW0RK)
+[![Thanks to Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-Thanks%20to%20Sponsors-FF69B4?style=for-the-badge&logo=githubsponsors&logoColor=white)](https://github.com/sponsors/synotechai) [![Follow on X.com](https://img.shields.io/badge/X.com-Follow-1DA1F2?style=for-the-badge&logo=x&logoColor=white)](https://x.com/synotechai)
 
 
 [Installation](docs/installation.md) •
@@ -28,7 +28,7 @@
 - Syno AI is not limited to predefined tasks but can be tailored for specific needs. As a general-purpose AI assistant, it autonomously gathers information, executes commands, writes code, and collaborates with other agents to complete tasks efficiently.
 - With persistent memory, it retains past solutions, facts, and instructions, continuously improving its accuracy and problem-solving speed over time.
 
-![Syno AI Working](docs/res/ui-screen.png)
+![Syno AI Working](docs/res/ui-screensyno.png)
 
 2. **Computer as a Dynamic Tool**
 
@@ -37,16 +37,16 @@
 - Tool usage functionality has been developed from scratch to be the most compatible and reliable, even with very small models.
 - **Built-in Tools:** Knowledge retrieval, web content analysis, code execution, and communication.
 - **Custom Tools:** Expand Syno AI by designing personalized tools tailored to specific workflows.
-- **Instruments:** Define reusable custom functions and procedures that Flux can call for efficient execution.
+- **Instruments:** Define reusable custom functions and procedures that Syno can call for efficient execution.
 
 3. **Multi-Agent Collaboration**
 
 - **Syno AI (Root Agent):** Directly interacts with the user, processing requests and managing workflows.
-- **Agent Echo (Subordinate Agent):** Flux can spawn Echo as a specialized sub-agent to break down and complete complex tasks in parallel.
+- **Agent Oron (Subordinate Agent):** Syno can spawn Oron as a specialized sub-agent to break down and complete complex tasks in parallel.
 
 By delegating tasks strategically, Syno AI maintains cleaner context, increased efficiency, and scalable problem-solving.
 
-![Multi-agent 2](docs/res/Agent_Echo_Generating.png)
+![Multi-agent 2](docs/res/syno-generating.png)
 
 4. **Fully Customizable and Extensible**
 

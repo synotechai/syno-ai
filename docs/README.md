@@ -1,32 +1,32 @@
-![Syno AI Logo](res/header.png)
-# Syno AI Documentation
-To begin with Syno AI, follow the links below for detailed guides on various topics:
+![Agent Syno Logo](res/syno-tech-banner.png)
+# Agent Syno Documentation
+To begin with Agent Syno, follow the links below for detailed guides on various topics:
 
-- **[Installation](installation.md):** Set up (or [update](installation.md#how-to-update-syno-ai)) Syno AI on your system.
+- **[Installation](installation.md):** Set up (or [update](installation.md#how-to-update-agent-syno)) Agent Syno on your system.
 - **[Usage Guide](usage.md):** Explore GUI features and usage scenarios.
 - **[Architecture Overview](architecture.md):** Understand the internal workings of the framework.
-- **[Contributing](contribution.md):** Learn how to contribute to the Syno AI project.
+- **[Contributing](contribution.md):** Learn how to contribute to the Agent Syno project.
 - **[Troubleshooting and FAQ](troubleshooting.md):** Find answers to common issues and questions.
 
-### Your experience with Syno AI starts now!
+### Your experience with Agent Syno starts now!
 
-- **Download Syno AI:** Follow the [installation guide](installation.md) to download and run Syno AI.
-- **Join the Community:** Join the Syno AI [Discord](https://discord.gg/bF9RYYX5hD) community to discuss ideas, ask questions, and collaborate with other contributors.
-- **Share your Work:** Share your Syno AI creations, workflows and discoverings on our [Show and Tell](https://github.com/synotechai/syno-ai/discussions/categories/show-and-tell) area on GitHub.
-- **Report Issues:** Use the [GitHub issue tracker](https://github.com/synotechai/syno-ai/issues) to report framework-relative bugs or suggest new features.
+- **Download Agent Syno:** Follow the [installation guide](installation.md) to download and run Agent Syno.
+- **Join the Community:** Join the Agent Syno [Discord](https://discord.gg/bF9RYYX5hD) community to discuss ideas, ask questions, and collaborate with other contributors.
+- **Share your Work:** Share your Agent Syno creations, workflows and discoverings on our [Show and Tell](https://github.com/synotechai/agent-syno/discussions/categories/show-and-tell) area on GitHub.
+- **Report Issues:** Use the [GitHub issue tracker](https://github.com/synotechai/agent-syno/issues) to report framework-relative bugs or suggest new features.
 
 ## Table of Contents
 
-- [Welcome to the Syno AI Documentation](#syno-ai-documentation)
-  - [Your Experience with Syno AI](#your-experience-with-syno-ai-starts-now)
+- [Welcome to the Agent Syno Documentation](#agent-syno-documentation)
+  - [Your Experience with Agent Syno](#your-experience-with-agent-syno-starts-now)
   - [Table of Contents](#table-of-contents)
 - [Installation Guide](installation.md)
   - [Windows, macOS and Linux Setup](installation.md#windows-macos-and-linux-setup-guide)
   - [Settings Configuration](installation.md#settings-configuration)
   - [Choosing Your LLMs](installation.md#choosing-your-llms)
   - [Installing and Using Ollama](installation.md#installing-and-using-ollama-local-models)
-  - [Using Syno AI on Mobile](installation.md#using-syno-ai-on-your-mobile-device)
-  - [How to Update Syno AI](installation.md#how-to-update-syno-ai)
+  - [Using Agent Syno on Mobile](installation.md#using-agent-syno-on-your-mobile-device)
+  - [How to Update Agent Syno](installation.md#how-to-update-agent-syno)
   - [Full Binaries Installation](installation.md#in-depth-guide-for-full-binaries-installation)
 - [Usage Guide](usage.md)
   - [Basic Operations](usage.md#basic-operations)

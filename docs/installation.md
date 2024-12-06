@@ -69,7 +69,7 @@ Note*: Offline operation requires prompt adjustments
 - Click the `Pull` button
 - The image will be downloaded to your machine in a few minutes
 
-![docker pull](res/setup/1-docker-image-search-updatedv2.png)
+![docker pull](res/setup/1-docker-image-search-updatedv2syno.png)
 
 > [!TIP]
 > Alternatively, run the following command in your terminal:
@@ -103,12 +103,12 @@ Note*: Offline operation requires prompt adjustments
   - Host path: Your chosen directory (e.g., `C:\syno-ai-data`)
   - Container path: `/a0`
 
-![docker port mapping](res/setup/3-docker-port-mapping-updatedv2.png)
+![docker port mapping](res/setup/3-docker-port-mapping-updatedv2syno.png)
 
 - Click the `Run` button in the "Images" tab.
 - The container will start and show in the "Containers" tab
 
-![docker containers](res/setup/4-docker-container-started-updated.png)
+![docker containers](res/setup/4-docker-container-started-updatedsyno.png)
 
 > [!TIP]
 > Alternatively, run the following command in your terminal:
@@ -122,12 +122,12 @@ Note*: Offline operation requires prompt adjustments
 - The framework will take a few seconds to initialize and the Docker logs will look like the image below.
 - Find the mapped port in Docker Desktop (shown as `<PORT>:80`) or click the port right under the container ID as shown in the image below
 
-![docker logs](res/setup/5-docker-click-to-open-updated.png)
+![docker logs](res/setup/5-docker-click-to-open-updatedsyno.png)
 
 - Open `http://localhost:<PORT>` in your browser
 - The Web UI will open. Syno AI is ready for configuration!
 
-![docker ui](res/setup/6-docker-a0-running-updated.png)
+![docker ui](res/setup/6-docker-a0-running-updatedsyno.png)
 
 > [!TIP]
 > You can also access the Web UI by clicking the ports right under the container ID in Docker Desktop.
@@ -157,8 +157,6 @@ Syno AI provides a comprehensive settings interface to customize various aspects
 - **Context Length:** Set the maximum token limit for context window
 - **Context Window Space:** Configure how much of the context window is dedicated to chat history
 
-![chat model settings](res/setup/settings/2-chat-model-updated.png)
-
 ### Utility Model Configuration
 - **Provider & Model:** Select a smaller, faster model for utility tasks like memory organization and summarization
 - **Temperature:** Adjust the determinism of utility responses
@@ -181,7 +179,7 @@ Syno AI provides a comprehensive settings interface to customize various aspects
 - **UI Password:** Configure password for web interface security
 - **Root Password:** Manage Docker container root password for SSH access
 
-![settings](res/setup/settings/3-auth-updated.png)
+![settings](res/setup/settings/3-auth-updatedsyno.png)
 
 ### Development Settings
 - **RFC Parameters (local instances only):** configure URLs and ports for remote function calls between instances
@@ -255,7 +253,7 @@ ollama pull <model-name>
 
 4. Click `Save` to confirm your settings.
 
-![ollama](res/setup/settings/4-local-models-updated.png)
+![ollama](res/setup/settings/4-local-models-updatedsyno.png)
 
 #### Managing your downloaded models
 Once you've downloaded some models, you might want to check which ones you have available or remove any you no longer need.
@@ -325,7 +323,7 @@ For developers or users who need to run Syno AI directly on their system,see the
 - Right-click and select "Remove" to remove the container
 - Go to "Images" tab and remove the `synotechai/syno-ai-run` image or click the three dots to pull the difference and update the Docker image.
 
-![docker delete image](res/setup/docker-delete-image-1-updated.png)
+![docker delete image](res/setup/docker-delete-image-1-updatedsyno.png)
 
 - Search and pull the new image if you chose to remove it
 - Run the new container with the same volume settings as the old one

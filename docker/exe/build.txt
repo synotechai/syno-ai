@@ -1,2 +1,2 @@
 docker login
-docker buildx build --platform linux/amd64,linux/arm64 -t synotechai/syno-ai-exe:latest --push .
+docker buildx build --platform linux/amd64,linux/arm64 -t synotechai/agent-syno-exe:latest --push .
