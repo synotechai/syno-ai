@@ -11,7 +11,6 @@ Contributions to improve Syno AI are very welcome!  This guide outlines how to c
 ## Making Changes
 
 * **Code Style:** Follow the existing code style. Syno AI generally follows PEP 8 conventions.
-* **Testing:** Write unit tests for new features. Syno AI uses the `pytest` framework. Ensure your changes pass all existing and new tests.
 * **Documentation:**  Update the documentation if your changes affect user-facing functionality. The documentation is written in Markdown.
 * **Commit Messages:**  Write clear and concise commit messages that explain the purpose of your changes.
 
@@ -19,8 +18,7 @@ Contributions to improve Syno AI are very welcome!  This guide outlines how to c
 
 1. **Push Your Branch:** Push your branch to your forked repository on GitHub.
 2. **Create a Pull Request:** Create a pull request from your branch to the appropriate branch in the main Syno AI repository.
-   * **For new features, refactoring, or significant changes:** Target the `testing` branch.
-   * **For bug fixes and patches:** Target the `development` branch.
+   * Target the `development` branch.
 3. **Provide Details:** In your pull request description, clearly explain the purpose and scope of your changes. Include relevant context, test results, and any other information that might be helpful for reviewers.
 4. **Address Feedback:**  Be responsive to feedback from the community. We love changes, but we also love to discuss them!
 

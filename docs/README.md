@@ -3,80 +3,62 @@
 To begin with Syno AI, follow the links below for detailed guides on various topics:
 
 - **[Installation](installation.md):** Set up (or [update](installation.md#how-to-update-syno-ai)) Syno AI on your system.
-- **[Quick Start](quickstart.md):** Begin using Syno AI with practical examples.
-- **[Usage Guide](usage.md):** Explore advanced features and capabilities.
+- **[Usage Guide](usage.md):** Explore GUI features and usage scenarios.
 - **[Architecture Overview](architecture.md):** Understand the internal workings of the framework.
 - **[Contributing](contribution.md):** Learn how to contribute to the Syno AI project.
 - **[Troubleshooting and FAQ](troubleshooting.md):** Find answers to common issues and questions.
-##
+
 ### Your experience with Syno AI starts now!
 
-- **Download Syno AI:** Download the latest release from the [GitHub releases page](https://github.com/synotechai/syno-ai/releases).
+- **Download Syno AI:** Follow the [installation guide](installation.md) to download and run Syno AI.
 - **Join the Community:** Join the Syno AI [Skool](https://www.skool.com/syno-ai) or [Discord](https://discord.gg/Z2tun2N3) community to discuss ideas, ask questions, and collaborate with other contributors.
 - **Share your Work:** Share your Syno AI creations, workflows and discoverings on our [Show and Tell](https://github.com/synotechai/syno-ai/discussions/categories/show-and-tell) area on GitHub.
 - **Report Issues:** Use the [GitHub issue tracker](https://github.com/synotechai/syno-ai/issues) to report framework-relative bugs or suggest new features.
-##
+
 ## Table of Contents
 
 - [Welcome to the Syno AI Documentation](#syno-ai-documentation)
-  - [Key Features](#key-features)
-    - [Start your experience with Syno AI](#your-experience-with-syno-ai-starts-now)
+  - [Your Experience with Syno AI](#your-experience-with-syno-ai-starts-now)
   - [Table of Contents](#table-of-contents)
-- [Installation guide for Windows, MacOS and Linux](installation.md)
-  - [Windows Quick Start](installation.md#windows-quick-start)
-  - [macOS Quick Start](installation.md#macos-quick-start)
-  - [Linux Quick Start](installation.md#linux-quick-start)
-  - [In-Depth Guide for Windows and MacOS](installation.md#in-depth-guide-for-windows-and-macos)
-    - [1. Install Conda (miniconda)](installation.md#1-install-conda-miniconda)
-    - [2. Install Docker (Docker Desktop application)](installation.md#2-install-docker-docker-desktop-application)
-    - [3. Download Syno AI](installation.md#3-download-syno-ai)
-    - [4. Set up Conda environment](installation.md#4-set-up-conda-environment)
-    - [5. Configure Syno AI](installation.md#5-configure-syno-ai)
-    - [6. Run Syno AI](installation.md#6-run-syno-ai)
-    - [Choosing Your LLMs](installation.md#choosing-your-llms)
-      - [Installing and Using Ollama](installation.md#installing-and-using-ollama-local-models)
-    - [How to update Syno AI](installation.md#how-to-update-syno-ai)
-    - [How to create executable files for Syno AI](installation.md#how-to-create-executable-files-for-syno-ai-in-windows-macos-and-linux)
-    - [Conclusion](installation.md#conclusion)
-- [Quick Start](quickstart.md)
-  - [Launching the Web UI](quickstart.md#launching-the-web-ui)
-  - [Running a Simple Task](quickstart.md#running-a-simple-task)
-  - [Example Interaction](quickstart.md#example-interaction)
-  - [Next Steps](quickstart.md#next-steps)
+- [Installation Guide](installation.md)
+  - [Windows, macOS and Linux Setup](installation.md#windows-macos-and-linux-setup-guide)
+  - [Settings Configuration](installation.md#settings-configuration)
+  - [Choosing Your LLMs](installation.md#choosing-your-llms)
+  - [Installing and Using Ollama](installation.md#installing-and-using-ollama-local-models)
+  - [Using Syno AI on Mobile](installation.md#using-syno-ai-on-your-mobile-device)
+  - [How to Update Syno AI](installation.md#how-to-update-syno-ai)
+  - [Full Binaries Installation](installation.md#in-depth-guide-for-full-binaries-installation)
 - [Usage Guide](usage.md)
+  - [Basic Operations](usage.md#basic-operations)
+    - [Restart Framework](usage.md#restart-framework)
+    - [Action Buttons](usage.md#action-buttons)
+    - [File Attachments](usage.md#file-attachments)
   - [Tool Usage](usage.md#tool-usage)
-  - [Prompt Engineering](usage.md#prompt-engineering)
   - [Example of Tools Usage](usage.md#example-of-tools-usage-web-search-and-code-execution)
-  - [Memory Management](usage.md#memory-management)
   - [Multi-Agent Cooperation](usage.md#multi-agent-cooperation)
-  - [Agent Behavior](usage.md#agent-behavior)
-  - [Using Syno AI on your mobile device](usage.md#using-syno-ai-on-your-mobile-device)
-  - [Using code_execution_tool outside of the Docker Container](usage.md#using-code_execution_tool-outside-of-the-docker-container)
+  - [Prompt Engineering](usage.md#prompt-engineering)
+  - [Voice Interface](usage.md#voice-interface)
+  - [Mathematical Expressions](usage.md#mathematical-expressions)
+  - [File Browser](usage.md#file-browser)
 - [Architecture Overview](architecture.md)
+  - [System Architecture](architecture.md#system-architecture)
+  - [Runtime Architecture](architecture.md#runtime-architecture)
   - [Core Components](architecture.md#core-components)
-  - [Agent Hierarchy and Communication](architecture.md#agent-hierarchy-and-communication)
-  - [Interaction Flow](architecture.md#interaction-flow)
-  - [Memory System](architecture.md#memory-system)
-  - [Tools](architecture.md#tools)
-  - [Knowledge](architecture.md#knowledge)
-  - [Prompts](architecture.md#prompts)
-  - [Extensions](architecture.md#extensions)
-    - [Structure of Extensions](architecture.md#structure-of-extensions)
-    - [Types of Default Extensions](architecture.md#types-of-default-extensions)
-  - [Key Files](architecture.md#key-files)
-  - [Directory Structure](architecture.md#directory-structure)
+    - [Agents](architecture.md#1-agents)
+    - [Tools](architecture.md#2-tools)
+    - [SearXNG Integration](architecture.md#searxng-integration)
+    - [Memory System](architecture.md#3-memory-system)
+    - [Prompts](architecture.md#4-prompts)
+    - [Knowledge](architecture.md#5-knowledge)
+    - [Instruments](architecture.md#6-instruments)
+    - [Extensions](architecture.md#7-extensions)
+  - [Implementation Details](architecture.md#implementation-details)
   - [Customization](architecture.md#customization)
-    - [Custom Prompts](architecture.md#custom-prompts)
-      - [Changing the System Prompt Folder](architecture.md#changing-the-system-prompt-folder)
-    - [AgentConfig](architecture.md#agentconfig)
-    - [Adding Tools](architecture.md#adding-tools)
-    - [Adding Instruments](architecture.md#adding-instruments)
-    - [Adding Extensions](architecture.md#adding-extensions)
-- [Contributing to Syno AI](contribution.md)
+- [Contributing](contribution.md)
   - [Getting Started](contribution.md#getting-started)
   - [Making Changes](contribution.md#making-changes)
   - [Submitting a Pull Request](contribution.md#submitting-a-pull-request)
   - [Documentation Stack](contribution.md#documentation-stack)
-- [FAQ and Troubleshooting](troubleshooting.md)
+- [Troubleshooting and FAQ](troubleshooting.md)
   - [Frequently Asked Questions](troubleshooting.md#frequently-asked-questions)
   - [Troubleshooting](troubleshooting.md#troubleshooting)
