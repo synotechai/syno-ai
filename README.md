@@ -1,123 +1,118 @@
 <div align="center">
 
-![Syno AI](docs/res/header.png)
+![Syno AI](docs/res/syno-tech-banner.png)
 
 # `Syno AI`
 
-[![Thanks to Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-Thanks%20to%20Sponsors-FF69B4?style=for-the-badge&logo=githubsponsors&logoColor=white)](https://github.com/sponsors/synotechai) [![Follow on X.com](https://img.shields.io/badge/X.com-Follow-1DA1F2?style=for-the-badge&logo=x&logoColor=white)](https://x.com/FluxFrameworks)
+[![Thanks to Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-Thanks%20to%20Sponsors-FF69B4?style=for-the-badge&logo=githubsponsors&logoColor=white)](https://github.com/sponsors/synotechai) [![Follow on X.com](https://img.shields.io/badge/X.com-Follow-1DA1F2?style=for-the-badge&logo=x&logoColor=white)](https://x.com/synotechai)
 
-
-[Installation](docs/installation.md) •
-[How to update](docs/installation.md#how-to-update-syno-ai) •
-[Documentation](docs/README.md) •
-[Usage](docs/usage.md)
+[安装指南](docs/installation.md) •
+[如何更新](docs/installation.md#how-to-update-agent-syno) •
+[文档](docs/README.md) •
+[使用方法](docs/usage.md)
 
 </div>
 
+## 一个与你一同进化的个性化、适应性智能代理框架
 
-## A personalized, adaptive agentic framework that evolves alongside you
+- Syno AI 不是一个僵化的系统——它会通过使用不断成长、学习和优化。
+- 它注重透明性、可读性与完全自定义，让你真正掌握控制权。
+- 它将你的电脑作为一个多功能工具，智能高效地执行任务。
 
-- Syno AI is not a rigid system—it dynamically grows, learns, and refines itself through use.
-- Designed for transparency, readability, and full customization, Syno AI puts you in control.
-- It leverages your computer as a versatile tool, executing tasks intelligently and efficiently.
+# 💡 主要功能
 
-# 💡 Key Features
+1. **多功能 AI 助理**
 
-1. **Versatile AI Assistant**
+- Syno AI 不局限于预设任务，可根据具体需求进行定制。作为通用型 AI 助手，它可以自主收集信息、执行命令、编写代码，并与其他代理协作高效完成任务。
+- 它拥有持久记忆，能够保留过去的解决方案、事实和指令，随着时间推移持续提升准确率与解决问题的速度。
 
-- Syno AI is not limited to predefined tasks but can be tailored for specific needs. As a general-purpose AI assistant, it autonomously gathers information, executes commands, writes code, and collaborates with other agents to complete tasks efficiently.
-- With persistent memory, it retains past solutions, facts, and instructions, continuously improving its accuracy and problem-solving speed over time.
+![Syno AI Working](docs/res/ui-screensyno.png)
 
-![Syno AI Working](docs/res/ui-screen.png)
+2. **将电脑变为动态工具**
 
-2. **Computer as a Dynamic Tool**
+- Syno AI 利用操作系统作为多功能、可适应的工具来完成任务。它不会依赖于预定义的单一工具，而是根据需要自行编写代码、与终端交互并创建定制解决方案。
+- 默认功能包括在线搜索、内存管理、通信和代码执行；其余功能可由代理自行构建或由用户扩展。这一基础设计确保了极高的兼容性和可靠性，甚至适用于小型 AI 模型。
+- 工具调用功能完全从零开发，确保在各种环境下都是最兼容、最可靠的。
+- **内建工具：** 知识检索、网页内容分析、代码执行和通信功能。
+- **自定义工具：** 可设计个性化工具来适配特定工作流程，扩展 Syno AI 功能。
+- **工具组件：** 可定义可重用的自定义函数与程序，供 Syno 高效调用。
 
-- Syno AI leverages the operating system as a versatile, adaptive tool to accomplish tasks. Instead of relying on predefined, single-purpose tools, it writes its own code, interacts with the terminal, and creates custom solutions as needed.
-- Its default capabilities include online search, memory management, communication, and code execution, but everything else is either built by the agent itself or extended by the user. This foundation ensures high compatibility and reliability, even with smaller AI models.
-- Tool usage functionality has been developed from scratch to be the most compatible and reliable, even with very small models.
-- **Built-in Tools:** Knowledge retrieval, web content analysis, code execution, and communication.
-- **Custom Tools:** Expand Syno AI by designing personalized tools tailored to specific workflows.
-- **Instruments:** Define reusable custom functions and procedures that Flux can call for efficient execution.
+3. **多代理协作系统**
 
-3. **Multi-Agent Collaboration**
+- **Syno AI（根代理）：** 直接与用户交互，处理请求并管理工作流程。
+- **Oron 代理（子代理）：** Syno 可生成名为 Oron 的子代理来并行拆解和完成复杂任务。
 
-- **Syno AI (Root Agent):** Directly interacts with the user, processing requests and managing workflows.
-- **Subordinate Agents:** Flux can spawn specialized sub-agents to break down and complete complex tasks in parallel.
+通过策略性任务分配，Syno AI 能保持清晰的上下文、更高的效率，并具备可扩展的问题解决能力。
 
-By delegating tasks strategically, Syno AI maintains cleaner context, increased efficiency, and scalable problem-solving.
+![Multi-agent 2](docs/res/syno-generating.png)
 
-![Multi-agent 2](docs/res/physics-2.png)
+4. **完全可自定义和可扩展**
 
-4. **Fully Customizable and Extensible**
+Syno AI 是一个开放、完全可修改的框架，让你完全掌控其行为与能力。
 
-Syno AI is an open, fully modifiable framework, giving you complete control over its behavior and capabilities.
+- 无硬编码限制 —— Syno AI 的每一个部分都可以修改、扩展或重写。没有隐藏或锁定的内容。
+- 灵活的系统行为 —— 代理的核心逻辑定义于 **prompts/default/agent.system.md** 文件。修改此文件可以彻底改变框架运行方式。
+- 可编辑的通信流程 —— 所有消息模板与代理处理流程中的指令都存储在 prompts/ 文件夹中，可随意自定义。
+- 模块化工具集 —— 所有默认工具位于 python/tools/ 中，可根据具体需求调整、替换或扩展为自定义函数。
 
-- No Hard-Coded Limits – Every aspect of Syno AI can be modified, extended, or rewritten. Nothing is hidden or locked.
-- Flexible System Behavior – The agent’s core logic is defined by system prompts, found in **prompts/default/agent.system.md**. Modify this file to drastically reshape how the framework operates.
-- Editable Communication Flow – Every message template and instruction within the agent's processing loop is stored in the prompts/ folder and can be customized.
-- Modular Toolset – All default tools reside in python/tools/ and can be adjusted, replaced, or expanded with custom-built functions to suit specific needs.
+使用 Syno AI，你不仅仅是在使用一个 AI——你正在塑造一个完全符合你需求的智能系统。🚀
 
-With Syno AI, you’re not just using an AI—you’re shaping it to work exactly the way you want. 🚀
+5. **流畅透明的通信系统**
 
-5. **Seamless and Transparent Communication**
+Syno AI 倡导清晰、结构化的交流方式，确保代理与用户间的顺畅协作。
 
-Syno AI thrives on clear, structured communication, ensuring smooth collaboration between agents and users.
+- 由提示词引导 —— 精心设计的系统提示词决定 Syno AI 的互动方式、响应风格和任务执行方式。精准的指令可打造更聪明高效的代理。
+- 多代理协调 —— 各代理之间可提问、下达指令、实时汇报进展，维护结构化工作流。
+- 实时交互 —— 终端界面实时流式输出，用户可实时监控、干预并调整任务。
+- 用户定义控制系统 —— 用户可自定义 Syno AI 的运行方式：
 
-- Guided by Prompts – A well-crafted system prompt shapes how Syno AI interacts, responds, and executes tasks. Precise instructions lead to smarter, more efficient agents.
-- Multi-Agent Coordination – Agents can ask questions, give instructions, and provide real-time updates to their superiors or subordinate agents, maintaining structured workflows.
-- Real-Time Interaction – The terminal interface streams live output, allowing you to monitor, intervene, and adjust tasks instantly.
-- User-Defined Control Systems – Customize how Syno AI operates:
+对于 Syno AI 来说，沟通不仅仅是一个功能——它是确保智能、适应性执行的核心优势。🚀
 
-With Syno AI, communication is not just a feature—it’s a core strength that ensures intelligent, adaptive execution at every level. 🚀
+## 🚀 你可以用 Syno AI 构建什么
 
-## 🚀 Things you can build with Syno AI
+- **开发项目** - "创建一个带有实时数据可视化的 React 仪表盘"
 
-- **Development Projects** - `"Create a React dashboard with real-time data visualization"`
+- **数据分析** - "分析上季度 NVIDIA 的销售数据并生成趋势报告"
 
-- **Data Analysis** - `"Analyze last quarter's NVIDIA sales data and create trend reports"`
+- **内容创作** - "撰写一篇关于微服务的技术博客"
 
-- **Content Creation** - `"Write a technical blog post about microservices"`
+- **系统运维** - "为我们的 Web 服务器设置一个监控系统"
 
-- **System Admin** - `"Set up a monitoring system for our web servers"`
+- **科研调研** - "收集并总结五篇关于 CoT 提示工程的最新 AI 论文"
 
-- **Research** - `"Gather and summarize five recent AI papers about CoT prompting"`
+# ⚙️ 安装指南
 
-# ⚙️ Installation
+点击打开视频了解如何安装 Syno AI：
 
-Click to open a video to learn how to install Syno AI:
+适用于 Windows、macOS 和 Linux 的详细设置教程和安装视频可在 Syno AI 文档的[此页面](docs/installation.md)找到。
 
-A detailed setup guide for Windows, macOS, and Linux with a video can be found in the Syno AI Documentation at [this page](docs/installation.md).
-
-### ⚡ Quick Start
+### ⚡ 快速开始
 
 ```bash
-# Pull and run with Docker
+# 使用 Docker 拉取并运行
 
 docker pull synotechai/syno-ai-run
 docker run -p 50001:80 synotechai/syno-ai-run
 
-# Visit http://localhost:50001 to start
+# 访问 http://localhost:50001 开始使用
 ```
 
-- Developers and contributors: download the full binaries for your system from the [releases page](https://github.com/synotechai/syno-ai/releases) and then follow the instructions [provided here](docs/installation.md#in-depth-guide-for-full-binaries-installation).
+## 🐳 完整 Docker 化，支持语音识别与文本转语音功能
 
-## 🐳 Fully Dockerized, with Speech-to-Text and TTS
+- 可自定义设置，允许用户根据需要调整代理行为和回应风格。
+- Web 界面输出清晰、流畅、多彩、可读性强并具有交互性；无隐藏内容。
+- 可直接在 Web UI 内保存或加载对话。
+- 每次会话的终端输出自动保存为 HTML 文件，保存在 **logs/** 文件夹中。
+- 代理输出为实时流式传输，用户可即时查看并随时介入。
+- 无需编码知识；只需具备提示设计与交流能力即可。
+- 借助优秀的系统提示词设计，该框架即便使用小模型也具有可靠性，并支持精准的工具调用。
 
-- Customizable settings allow users to tailor the agent's behavior and responses to their needs.
-- The Web UI output is very clean, fluid, colorful, readable, and interactive; nothing is hidden.
-- You can load or save chats directly within the Web UI.
-- The same output you see in the terminal is automatically saved to an HTML file in **logs/** folder for every session.
-- Agent output is streamed in real-time, allowing users to read along and intervene at any time.
-- No coding is required; only prompting and communication skills are necessary.
-- With a solid system prompt, the framework is reliable even with small models, including precise tool usage.
+## 👀 注意事项
 
-## 👀 Keep in Mind
+1. **Syno AI 有潜在危险！**
 
-1. **Syno AI Can Be Dangerous!**
+- 在适当的指令下，Syno AI 能执行各种操作，甚至可能涉及对电脑、数据或账号的高风险行为。请务必在隔离环境（如 Docker）中运行 Syno AI，并谨慎使用指令。
 
-- With proper instruction, Syno AI is capable of many things, even potentially dangerous actions concerning your computer, data, or accounts. Always run Syno AI in an isolated environment (like Docker) and be careful what you wish for.
+2. **Syno AI 以提示词驱动。**
 
-2. **Syno AI Is Prompt-based.**
-
-- The whole framework is guided by the **prompts/** folder. Agent guidelines, tool instructions, messages, utility AI functions, it's all there.
-
+- 整个框架由 **prompts/** 文件夹中的内容所引导。代理指南、工具指令、消息模版、实用函数等都包含其中。
