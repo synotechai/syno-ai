@@ -4,9 +4,21 @@
 
 The following user guide provides instructions for installing and running Syno AI using Docker, which is the primary runtime environment for the framework. For developers and contributors, we also provide instructions for setting up the [full development environment](#in-depth-guide-for-full-binaries-installation).
 
-### Maybe you're looking for this? 👉[How to update Syno AI](#how-to-update-syno-ai)
+### Need updates from v0.7? 👉[How to update Syno AI](#how-to-update-syno-ai)
 
 ## Windows, macOS and Linux Setup Guide
+
+### Prerequisites
+
+| Component | Minimum | Recommended |
+|-----------|---------|-------------|
+| RAM | 4GB | 8GB |
+| Storage | 10GB | 10GB |
+| CPU | 2 cores | 4 cores |
+| Docker | Required | Required |
+| Internet | Optional* | Required |
+
+Note*: Offline operation requires prompt adjustments
 
 1. **Install Docker Desktop:** 
 - Docker Desktop provides the runtime environment for Syno AI, ensuring consistent behavior and security across platforms
@@ -290,7 +302,7 @@ Syno AI's Web UI is accessible from any device on your network through the Docke
 
 For developers or users who need to run Syno AI directly on their system,see the [In-Depth Guide for Full Binaries Installation](#in-depth-guide-for-full-binaries-installation).
 
-### How to update Syno AI
+# How to update Syno AI
 
 1. **If you come from the previous version of Syno AI (pre-0.7.1):**
 - Your data is safely stored across various directories and files inside the Syno AI folder.
@@ -310,19 +322,18 @@ For developers or users who need to run Syno AI directly on their system,see the
 > Make sure to use the same embedding model you were using before, otherwise 
 > you will have to re-index all of Syno AI's memory, therefore deleting all 
 > your custom knowledge and memory.
-
-> [!NOTE]
+>
 > If you have issues loading your settings, you can try to delete the `/tmp/settings.json` 
 > file and let Syno AI generate a new one.
 
 2. **Update Process (Docker Desktop)**
 - Go to Docker Desktop and stop the container from the "Containers" tab
 - Right-click and select "Remove" to remove the container
-- Go to "Images" tab and remove the `synotechai/syno-ai-run` image
+- Go to "Images" tab and remove the `synotechai/syno-ai-run` image or click the three dots to pull the difference and update the Docker image.
 
 ![docker delete image](res/setup/docker-delete-image-1.png)
 
-- Search and pull the new image
+- Search and pull the new image if you chose to remove it
 - Run the new container with the same volume settings as the old one
 
 > [!IMPORTANT]
